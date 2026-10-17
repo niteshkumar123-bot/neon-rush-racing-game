@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080817"><title>NEON RUSH — Cyber Circuit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="game"></div>
+<div class="scanlines"></div>
+<header class="topbar"><a class="brand" href="#"><span class="brand-mark">N</span><span>NEON<span class="pink"> RUSH</span><small>CYBER CIRCUIT // 2099</small></span></a><div class="top-right"><span class="live-dot"></span><span id="connection">CONNECTING</span><span class="version">BUILD 02.10</span><button id="soundToggle" class="sound-toggle" type="button" aria-pressed="true" title="Toggle sound">♫ SOUND ON</button></div></header>
+<main>
+<section id="lobby" class="overlay">
+  <div class="hero-kicker"><span class="line"></span> THE CITY NEVER SLEEPS <span class="line"></span></div>
+  <h1>NEON<br><span>RUSH</span></h1>
+  <p class="hero-copy">OWN THE NIGHT. <b>BREAK THE LIMIT.</b><br>Race the grid in a city that never powers down.</p>
+  <div class="lobby-card">
+    <div class="tabs"><button class="tab active" data-tab="create">CREATE RACE</button><button class="tab" data-tab="join">JOIN RACE</button></div>
+    <label for="playerName">RACER ID</label><input id="playerName" maxlength="16" autocomplete="nickname" placeholder="Enter your callsign" value="NIGHTDRIVER"><label for="carSkin">CAR NEON SKIN</label><select id="carSkin" class="skin-select"><option value="#00f5ff">CYAN PHANTOM</option><option value="#ff2bd6">PINK PULSE</option><option value="#b6ff00">ACID VOLT</option><option value="#ff8a00">SOLAR FLARE</option><option value="#9b6bff">VIOLET GHOST</option><option value="#ff3864">CRIMSON EDGE</option><option value="#32ffb4">MINT CIRCUIT</option><option value="#f8f7ff">WHITEOUT</option></select>
+    <div id="joinCodeWrap" class="hidden"><label for="roomCode">ROOM CODE</label><input id="roomCode" maxlength="5" placeholder="ABCDE" class="code-input" autocomplete="off"></div>
+    <button id="primaryAction" class="primary-button"><span>CREATE PRIVATE ROOM</span><b>↗</b></button>
+    <button id="soloAiButton" class="solo-ai-button" type="button"><span>PLAY SOLO VS AI</span><b>⚡</b></button>
+    <div id="notice" class="notice"></div>
+    <div class="lobby-foot"><span><i></i> UP TO 8 RACERS</span><span>5X TRACK LENGTH / EXTREME LEVELS</span></div>
+  </div>
+  <div class="feature-row"><div><span class="feature-icon">⌁</span><span>DRIFT SYSTEM</span></div><div><span class="feature-icon">ϟ</span><span>NITRO OVERDRIVE</span></div><div><span class="feature-icon">◉</span><span>LIVE MULTIPLAYER</span></div></div>
+</section>
+<section id="waiting" class="overlay hidden">
+  <div class="hero-kicker"><span class="line"></span> GRID ASSEMBLY <span class="line"></span></div><h2>RACE <span class="cyan">LOBBY</span></h2>
+  <div class="room-code-panel"><small>YOUR ROOM CODE</small><div><strong id="roomCodeDisplay">-----</strong><button id="copyCode" title="Copy room code">COPY ↗</button></div><p>Share this code with your crew.</p></div>
+  <div class="players-panel"><div class="panel-heading">PILOTS ON GRID <span id="playerCount">1 / 8</span></div><div id="playerList"></div></div>
+  <div class="level-picker-panel" id="levelPickerPanel">
+    <label for="levelSelect">STARTING LEVEL <small>HOST ONLY · SKIP PREVIOUS LEVELS</small></label>
+    <div class="level-picker-row"><button id="levelMinus" type="button" aria-label="Decrease starting level">−</button><select id="levelSelect" aria-label="Choose starting level"></select><button id="levelPlus" type="button" aria-label="Increase starting level">+</button></div>
+    <p id="levelDifficulty" class="level-difficulty">LEVEL 1 · WARM-UP</p>
+  </div>
+  <button id="readyButton" class="primary-button"><span>READY UP</span><b>↗</b></button>
+  <p class="waiting-hint">Ready up to start. In Solo vs AI, NEON BOT joins automatically.</p>
+  <button id="leaveButton" class="text-button">← LEAVE ROOM</button>
+</section>
+<section id="hud" class="hidden">
+  <div class="hud-top"><div class="hud-chip"><small>LEVEL <span id="levelValue">01</span></small><strong id="raceStatus">GRID READY</strong></div><div class="hud-center"><div class="lap-label">LEVEL PROGRESS</div><strong id="lapValue">00<span> / 100</span></strong><div class="lap-track"><i id="lapFill"></i></div><div class="challenge-mini">CHECKPOINT <b id="checkpointValue">0/4</b></div></div><div class="hud-chip coin-chip"><small>COINS</small><strong id="coinValue">000</strong></div><div class="hud-chip align-right"><small>POSITION</small><strong id="positionValue">—<em> / 08</em></strong></div></div>
+  <div id="countdown" class="countdown hidden">3</div>
+  <div class="hud-bottom"><div class="speed-panel"><div class="speed-number" id="speedValue">000<span> KM/H</span></div><div class="speed-bar"><i id="speedFill"></i></div><div class="speed-label">VELOCITY <span id="gearValue">GEAR 1</span></div></div><div class="nitro-panel"><div class="nitro-head"><span>ϟ NITRO</span><strong id="nitroValue">100%</strong></div><div class="nitro-bar"><i id="nitroFill"></i></div><small>HOLD SHIFT TO OVERDRIVE</small></div><div class="race-leaderboard"><div class="panel-heading">LIVE STANDINGS <span>◉ LIVE</span></div><div id="leaderboard"></div></div></div>
+  <div class="controls-hint"><span><b>W / ↑</b> THROTTLE</span><span><b>A D / ← →</b> STEER</span><span><b>SPACE</b> DRIFT / BRAKE</span><span><b>SHIFT</b> NITRO</span><span><b>C</b> CAMERA</span></div><div class="touch-controls" aria-label="Touch driving controls"><button data-key="arrowleft" aria-label="Steer left">◀</button><button data-key="arrowdown" aria-label="Brake">▼</button><button data-key="arrowup" aria-label="Accelerate">▲</button><button data-key="arrowright" aria-label="Steer right">▶</button><button data-key=" " aria-label="Drift">DRIFT</button><button data-key="shift" aria-label="Nitro">ϟ NITRO</button></div>
+  <div id="finishBanner" class="finish-banner hidden"><small>CHECKPOINT REACHED</small><h2 id="finishTitle">LEVEL CLEARED</h2><p id="finishText">You made it to the finish gate.</p><button id="backToLobby" class="primary-button"><span>NEXT LEVEL</span><b>↗</b></button></div>
+</section>
+</main>
+
+
+<!-- Neon AI: free, built-in game assistant (no external API key required). -->
+<aside id="neonAi" class="neon-ai" aria-label="Neon AI game assistant">
+  <button id="neonAiToggle" class="neon-ai-toggle" type="button" aria-expanded="false" aria-controls="neonAiPanel">
+    <span class="ai-pulse"></span><span>NEON <b>AI</b></span><span class="ai-toggle-icon">✦</span>
+  </button>
+  <section id="neonAiPanel" class="neon-ai-panel hidden" aria-label="Neon AI chat">
+    <header class="neon-ai-header">
+      <div class="neon-ai-avatar">✦</div>
+      <div><strong>NEON AI</strong><small>RACE ASSISTANT <i></i></small></div>
+      <button id="neonAiClose" type="button" aria-label="Close Neon AI">×</button>
+    </header>
+    <div id="neonAiMessages" class="neon-ai-messages" aria-live="polite">
+      <div class="neon-ai-message bot"><b>NEON AI</b><p>Hey, driver. Need controls, racing tips, or a readout of your current run? Ask me anything about Neon Rush.</p></div>
+    </div>
+    <div class="neon-ai-suggestions">
+      <button type="button" data-ai-prompt="How do I control the car?">CONTROLS</button>
+      <button type="button" data-ai-prompt="Give me a racing tip">RACE TIP</button>
+      <button type="button" data-ai-prompt="How am I doing?">MY STATS</button>
+    </div>
+    <form id="neonAiForm" class="neon-ai-form">
+      <input id="neonAiInput" type="text" maxlength="240" autocomplete="off" placeholder="Ask Neon AI..." aria-label="Message Neon AI">
+      <button type="submit" aria-label="Send message">➤</button>
+    </form>
+    <div class="neon-ai-footnote">BUILT-IN GAME ASSISTANT · NO API KEY</div>
+  </section>
+</aside>
+
+<div class="toast" id="toast"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/client.js"></script>
+</body></html>
