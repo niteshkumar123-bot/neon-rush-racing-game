@@ -22,8 +22,118 @@
 @keyframes impactShake{0%{transform:translate(0,0)}15%{transform:translate(-7px,3px)}30%{transform:translate(6px,-3px)}45%{transform:translate(-5px,-2px)}60%{transform:translate(4px,2px)}75%{transform:translate(-2px,1px)}100%{transform:translate(0,0)}}
 #game canvas.impact-shake{animation:impactShake .28s ease-out}
 
+/* AI race option */
+.ai-race-options{border-top:1px solid #252b48;margin-top:16px;padding-top:15px}.ai-race-options label{margin-bottom:8px}.ai-race-options .skin-select{margin:0 0 10px}.ai-race-button{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:linear-gradient(100deg,#ff2bd6,#a66bff);border:0;color:#fff;font:800 11px Orbitron,sans-serif;letter-spacing:1px;cursor:pointer;box-shadow:0 0 22px #ff2bd622}.ai-race-button:hover{filter:brightness(1.13)}.ai-race-options p{font-size:11px;color:#858cac;line-height:1.4;margin:9px 0 0}
 
-/* Neon AI in-game chat */
+/* Mobile racing controls: landscape-first, large thumb-friendly buttons. */
+.touch-controls{display:none;position:fixed;z-index:8;left:0;right:0;bottom:max(12px,env(safe-area-inset-bottom));padding:0 16px;align-items:flex-end;justify-content:space-between;gap:16px;pointer-events:none;}
+.touch-controls .steer-controls,.touch-controls .pedal-controls{display:flex;align-items:flex-end;gap:10px;pointer-events:auto;}
+.touch-controls .steer-btn{width:clamp(56px,9vw,82px);height:clamp(58px,11vh,78px);font-size:23px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.touch-controls .steer-btn small{font-size:9px;letter-spacing:1px;}
+.touch-controls .touch-btn{border:1px solid #00f5ff99;border-radius:13px;color:#f5fdff;background:linear-gradient(145deg,#111a32eF,#070b20eF);box-shadow:0 4px 18px #0008,inset 0 0 16px #00f5ff0b;backdrop-filter:blur(8px);font:800 11px Orbitron,sans-serif;letter-spacing:.7px;min-width:58px;min-height:54px;padding:10px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+.touch-controls .touch-btn.pressed{transform:scale(.95);background:#00dce8;color:#06101b;border-color:#b9ffff;box-shadow:0 0 22px #00f5ff70;}
+.touch-controls .gas-btn{min-width:clamp(70px,12vw,100px);height:clamp(68px,13vh,92px);background:linear-gradient(145deg,#167a51ee,#0b392eee);border-color:#54ffb0;}
+.touch-controls .brake-btn{min-width:clamp(64px,10vw,86px);height:clamp(58px,11vh,78px);background:linear-gradient(145deg,#8f283fee,#3a1328ee);border-color:#ff648d;}
+.touch-controls .nitro-btn{border-color:#ff2bd6;color:#ffb6f0;min-width:70px;}
+.touch-controls .drift-btn{border-color:#a18aff;color:#d6ccff;min-width:60px;}
+.rotate-prompt{position:fixed;z-index:20;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;background:#050714f5;color:white;padding:24px;}
+.rotate-prompt strong{font:800 17px Orbitron,sans-serif;color:var(--cyan);letter-spacing:2px;}
+.rotate-prompt span{font-size:14px;color:#aab3d1;}
+.rotate-icon{font-size:46px;color:var(--pink);animation:rotateNudge 1.6s ease-in-out infinite;}
+@keyframes rotateNudge{50%{transform:rotate(-90deg) scale(1.08)}}
+@media (pointer:coarse), (max-width:900px){
+  .touch-controls{display:flex;}
+  .controls-hint{display:none;}
+  #hud .hud-top{top:max(8px,env(safe-area-inset-top));left:12px;right:12px;}
+  #hud .hud-bottom{bottom:calc(clamp(84px,15vh,112px) + env(safe-area-inset-bottom));left:12px;right:12px;gap:10px;}
+  #hud .race-leaderboard{display:none;}
+  #hud .speed-panel{width:clamp(105px,22vw,165px);}
+  #hud .nitro-panel{width:clamp(100px,19vw,145px);}
+}
+@media (orientation:landscape) and (max-height:520px){
+  .topbar{height:42px;padding:0 12px;}
+  .brand-mark{width:26px;height:26px;font-size:17px;}
+  .brand{font-size:11px;gap:7px;}
+  .brand small{font-size:7px;margin-top:1px;}
+  .top-right{font-size:8px;gap:6px;}
+  #hud .hud-top{top:48px;}
+  .hud-chip{min-width:68px;padding:5px 7px;}
+  .hud-chip small,.lap-label{font-size:7px;letter-spacing:.7px;}
+  .hud-chip strong{font-size:10px;margin-top:3px;}
+  .hud-center{width:82px;}
+  .hud-center>strong{font-size:18px;margin:1px;}
+  .challenge-mini{font-size:6px;margin-top:3px;}
+  #hud .hud-bottom{bottom:calc(76px + env(safe-area-inset-bottom));}
+  .speed-number{font-size:23px;}
+  .speed-panel{padding:5px 7px;}
+  .nitro-head{font-size:8px;margin-bottom:4px;}
+  .nitro-panel small{font-size:6px;margin-top:4px;}
+  .touch-controls{padding:0 12px;bottom:max(7px,env(safe-area-inset-bottom));}
+  .touch-controls .steer-btn{height:54px;min-height:54px;width:62px;}
+  .touch-controls .touch-btn{min-height:43px;padding:7px;font-size:9px;border-radius:10px;}
+  .touch-controls .gas-btn{height:54px;}
+  .touch-controls .brake-btn{height:47px;}
+}
+@media (orientation:portrait) and (max-width:900px){
+  #hud .touch-controls{opacity:.35;}
+}
+
+/* Race results, podium and win celebration */
+.finish-banner{width:min(680px,94vw);max-height:88vh;overflow:auto;z-index:12;isolation:isolate}
+.finish-banner.victory-celebration{border-color:#ffe66d;box-shadow:0 0 35px #ffe66d55,0 0 110px #00f5ff35;animation:victoryPop .55s cubic-bezier(.2,1.4,.4,1)}
+.finish-banner.victory-celebration h2{color:#ffe66d;text-shadow:0 0 25px #ffe66d88,0 0 50px #ff2bd655}
+.win-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
+.confetti-bit{position:absolute;top:-16px;width:7px;height:12px;border-radius:2px;opacity:0;animation:confettiFall var(--fall) ease-in forwards;animation-delay:var(--delay,0s)}
+@keyframes confettiFall{0%{transform:translate3d(0,-20px,0) rotate(0);opacity:1}100%{transform:translate3d(var(--drift),520px,0) rotate(760deg);opacity:0}}
+@keyframes victoryPop{0%{transform:translate(-50%,-50%) scale(.82)}70%{transform:translate(-50%,-50%) scale(1.025)}100%{transform:translate(-50%,-50%) scale(1)}}
+.results-table-wrap{width:100%;overflow:auto;margin:18px 0 12px;border:1px solid #263352;border-radius:8px;background:#050918b8}
+.results-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px;white-space:nowrap}
+.results-table th{padding:10px 12px;color:#7f8bab;font:700 9px Orbitron,sans-serif;letter-spacing:1px;background:#10162c}
+.results-table td{padding:10px 12px;border-top:1px solid #202944;color:#eaf0ff;font-weight:700}
+.results-table tr.result-winner td{color:#ffe66d;background:#ffe66d0c}
+.results-table tr.result-me td{background:#00f5ff0c}
+.result-racer{display:flex;align-items:center;gap:9px;min-width:115px}
+.result-racer>i{display:block;width:5px;height:30px;border-radius:3px;box-shadow:0 0 10px currentColor}
+.result-racer small{display:block;margin-top:3px;color:#7785a8;font:700 8px Orbitron,sans-serif;letter-spacing:.6px}
+.result-status{font:700 8px Orbitron,sans-serif;letter-spacing:.6px}
+.status-finished{color:#8eff80}.status-dnf{color:#ff8eaa}
+.winner-medal{margin:10px 0 16px;color:#ffe66d;font-size:19px;text-shadow:0 0 16px #ffe66d55;animation:medalPulse .8s infinite alternate}
+.winner-medal span{font:800 11px Orbitron,sans-serif;letter-spacing:2px}
+@keyframes medalPulse{to{transform:scale(1.04);filter:brightness(1.35)}}
+@media(max-width:700px){.finish-banner{width:96vw;padding:14px;max-height:86vh}.finish-banner h2{font-size:23px;margin:7px 0}.finish-banner p{font-size:12px;margin:7px 0}.results-table{font-size:11px}.results-table th,.results-table td{padding:8px 7px}.result-racer{gap:6px;min-width:90px}.results-table th{font-size:7px}.result-racer small{font-size:7px}}
+
+
+/* Cinematic winner ending: full-screen championship moment only for the race winner. */
+.finish-banner.epic-winner-screen{width:min(980px,96vw);max-height:94vh;padding:clamp(16px,3vw,34px);border:1px solid #ffe66d;background:radial-gradient(ellipse at 50% 8%,#4d2b69f5 0%,#10132df8 43%,#050817f8 100%);box-shadow:0 0 0 1px #ffe66d22,0 0 45px #ffdf6a55,0 0 160px #ff2bd633;overflow:auto}
+.finish-banner.epic-winner-screen #finishEyebrow,.finish-banner.epic-winner-screen #finishTitle,.finish-banner.epic-winner-screen #finishText{display:none}
+.epic-victory{position:relative;isolation:isolate;overflow:hidden;padding:12px 10px 22px;margin:-10px -8px 14px;text-align:center}
+.victory-rays{position:absolute;z-index:-1;left:50%;top:20%;width:min(80vw,660px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:repeating-conic-gradient(from 0deg,#ffe66d10 0deg 7deg,transparent 7deg 15deg);mask-image:radial-gradient(circle,black 0%,transparent 68%);animation:raySpin 28s linear infinite}
+.victory-kicker{color:#a9faff;font:800 clamp(8px,1.2vw,12px) Orbitron,sans-serif;letter-spacing:clamp(2px,.6vw,6px);text-shadow:0 0 16px #00f5ff88}
+.victory-trophy{font-size:clamp(64px,11vw,116px);line-height:1.25;margin:3px 0;filter:drop-shadow(0 0 20px #ffe66d88);animation:trophyRise .85s cubic-bezier(.15,1.5,.4,1) both, trophyGlow 1.4s ease-in-out 1s infinite alternate}
+.victory-champ{font:900 clamp(10px,1.5vw,16px) Orbitron,sans-serif;letter-spacing:clamp(4px,1vw,10px);color:#ffe66d;text-shadow:0 0 18px #ffe66d88}
+.epic-victory h3{font:900 clamp(27px,6vw,60px) Orbitron,sans-serif;letter-spacing:1px;line-height:1.05;margin:12px 0 8px;color:#fff;text-shadow:0 0 12px #fff8,0 0 35px #ff2bd6aa,0 0 65px #00f5ff55;overflow-wrap:anywhere}
+.victory-subtitle{font:800 clamp(9px,1.5vw,14px) Orbitron,sans-serif;letter-spacing:clamp(2px,.7vw,7px);color:#ff8ce8}
+.victory-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:720px;margin:24px auto 18px}
+.victory-stats>div{padding:14px 8px;border:1px solid #ffffff24;background:linear-gradient(145deg,#ffffff0d,#00f5ff08);box-shadow:inset 0 0 22px #00f5ff08}
+.victory-stats small{display:block;color:#9da8cb;font:700 clamp(7px,1vw,10px) Orbitron,sans-serif;letter-spacing:1px;margin-bottom:9px}
+.victory-stats strong{display:block;color:#ffe66d;font:900 clamp(15px,2.7vw,26px) Orbitron,sans-serif}
+.victory-stats em{font-size:10px;color:#a9b3d1;font-style:normal}
+.victory-prompt{font:800 9px Orbitron,sans-serif;letter-spacing:3px;color:#8effd1;margin:12px 0 4px}.victory-prompt span{color:#ffe66d;margin-left:9px;letter-spacing:5px}
+.firework-burst .victory-trophy{animation:trophyRise .85s cubic-bezier(.15,1.5,.4,1) both,trophyGlow .7s ease-in-out infinite alternate}
+.finish-banner.epic-winner-screen .winner-medal{font-size:23px}
+@keyframes raySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes trophyRise{0%{transform:translateY(65px) scale(.35) rotate(-14deg);opacity:0}70%{transform:translateY(-8px) scale(1.08) rotate(4deg);opacity:1}100%{transform:translateY(0) scale(1) rotate(0)}}
+@keyframes trophyGlow{to{filter:drop-shadow(0 0 30px #ffe66d) drop-shadow(0 0 48px #ff2bd688);transform:scale(1.035)}}
+@media(max-width:700px){.finish-banner.epic-winner-screen{width:96vw;padding:12px;max-height:92vh}.epic-victory{padding:4px 2px 12px;margin:-3px 0 10px}.victory-trophy{font-size:66px}.epic-victory h3{font-size:clamp(24px,7vw,38px);margin:8px 0}.victory-stats{gap:5px;margin:14px auto 10px}.victory-stats>div{padding:10px 4px}.victory-stats small{font-size:7px;letter-spacing:.3px}.victory-stats strong{font-size:clamp(12px,3.5vw,18px)}.victory-prompt{font-size:7px;letter-spacing:1.5px}}
+@media(prefers-reduced-motion:reduce){.victory-rays,.victory-trophy,.firework-burst .victory-trophy{animation:none!important}}
+
+/* Clear post-race choices: advance or replay this level. */
+.finish-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.finish-actions .primary-button{min-width:0;padding:14px 12px;font-size:clamp(8px,1.3vw,12px)}.finish-actions .replay-button{background:#ff2bd6;color:#fff;box-shadow:0 0 24px #ff2bd633}.finish-actions .replay-button:hover{background:#ff91e9}.epic-winner-screen .victory-prompt{margin-top:10px}.results-table th:nth-child(4),.results-table td:nth-child(4){text-align:right;color:#ffe66d}@media(max-width:700px){.finish-actions{grid-template-columns:1fr 1fr;gap:7px}.finish-actions .primary-button{padding:12px 8px;letter-spacing:.4px}.finish-banner.epic-winner-screen{max-height:94vh}.victory-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Player garage and car collection */
+.garage-shell{margin:14px 0 12px;text-align:left}.garage-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border:1px solid rgba(0,245,255,.38);border-radius:10px;background:linear-gradient(100deg,rgba(0,245,255,.12),rgba(255,43,214,.08));color:#f7f8ff;font:800 12px Orbitron,sans-serif;letter-spacing:1px;cursor:pointer}.garage-toggle small{display:block;color:#8d91b1;font:600 10px Rajdhani,sans-serif;letter-spacing:1.2px;margin-top:5px}.garage-toggle>b{font:700 11px Rajdhani,sans-serif;color:var(--cyan);white-space:nowrap}.garage-panel{margin-top:10px;padding:12px;border:1px solid rgba(0,245,255,.2);border-radius:12px;background:rgba(4,7,22,.96);box-shadow:0 16px 40px #0006}.garage-preview-wrap{height:190px;position:relative;overflow:hidden;border-radius:9px;background:radial-gradient(ellipse at 50% 60%,#20344c,#090b1b 72%)}#garagePreview{width:100%;height:100%;display:block}.garage-preview-label{position:absolute;left:12px;bottom:10px;display:grid;gap:3px;pointer-events:none;text-shadow:0 2px 6px #000}.garage-preview-label small{font-size:9px;letter-spacing:1.5px;color:var(--cyan)}.garage-preview-label strong{font:800 17px Orbitron,sans-serif}.garage-preview-label span{font-size:11px;color:#c4c9df}.garage-profile{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;padding:10px 2px;color:#aeb7d4;font-size:10px;letter-spacing:.7px}.garage-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;max-height:240px;overflow:auto;padding:2px 2px 8px}.garage-car{min-width:0;position:relative;text-align:left;border:1px solid #30364f;border-radius:8px;background:#101429;color:#f7f8ff;padding:9px 7px;cursor:pointer}.garage-car.selected{border-color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan),0 0 14px #00f5ff22}.garage-car.locked{opacity:.75}.garage-car-swatch{height:8px;border-radius:5px;margin-bottom:8px;box-shadow:0 0 12px currentColor}.garage-car strong{display:block;font:700 10px Orbitron,sans-serif;line-height:1.35;overflow-wrap:anywhere}.garage-car small{display:block;margin-top:5px;font-size:10px;color:#9da6c7}.garage-car .car-lock{position:absolute;right:6px;top:6px;font-size:11px}.garage-actions{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-top:8px}.garage-actions .primary-button{margin:0;min-width:0}.garage-actions .text-button{margin:0;white-space:nowrap}.garage-car:focus-visible,.garage-toggle:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}@media(max-width:520px){.garage-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:200px}.garage-preview-wrap{height:155px}.garage-profile{font-size:9px}.garage-toggle{padding:11px}.garage-actions{grid-template-columns:1fr}.garage-actions .text-button{padding:8px}}
+
+/* Built-in Neon AI assistant restored from the current game */
 .neon-ai{position:fixed;z-index:1000;right:22px;bottom:22px;font-family:'Rajdhani',sans-serif;color:#f4f8ff}
 .neon-ai-toggle{display:flex;align-items:center;gap:9px;border:1px solid #00eaff88;border-radius:999px;padding:12px 17px;background:linear-gradient(120deg,#0b1630f5,#17102bf5);color:#eafcff;font:700 13px 'Orbitron',sans-serif;letter-spacing:1px;box-shadow:0 0 22px #00eaff2c;cursor:pointer}
 .neon-ai-toggle b{color:#ff2bd6}.ai-pulse{width:8px;height:8px;border-radius:50%;background:#5effc2;box-shadow:0 0 10px #5effc2}.ai-toggle-icon{color:#00eaff;font-size:18px}
@@ -39,6 +149,3 @@
 .neon-ai-suggestions{display:flex;gap:6px;padding:0 12px 10px}.neon-ai-suggestions button{flex:1;border:1px solid #4e5e80;border-radius:7px;background:#10162a;color:#9eb1d5;padding:7px 3px;font:600 9px 'Orbitron',sans-serif;cursor:pointer}.neon-ai-suggestions button:hover{border-color:#00eaff;color:#00eaff}
 .neon-ai-form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #43517366}.neon-ai-form input{min-width:0;flex:1;border:1px solid #364969;border-radius:9px;background:#080d1c;color:#fff;padding:11px;font:500 15px 'Rajdhani',sans-serif;outline:none}.neon-ai-form input:focus{border-color:#00eaff}.neon-ai-form button{width:40px;border:0;border-radius:9px;background:#00d9ed;color:#07101c;font-size:19px;cursor:pointer}.neon-ai-footnote{text-align:center;padding:0 8px 10px;color:#647698;font:8px 'Orbitron',sans-serif;letter-spacing:.7px}
 @media(max-width:600px){.neon-ai{right:12px;bottom:12px}.neon-ai-toggle{padding:10px 13px}.neon-ai-panel{bottom:53px;height:min(460px,calc(100dvh - 90px))}}
-
-/* Solo AI race option */
-.solo-ai-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:14px 18px;border:1px solid #ff2bd688;border-radius:8px;background:linear-gradient(110deg,#28112cdd,#11172add);color:#ff9bed;font:700 12px 'Orbitron',sans-serif;letter-spacing:1.2px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}.solo-ai-button b{font-size:18px;color:#ff2bd6}.solo-ai-button:hover{transform:translateY(-1px);border-color:#ff2bd6;box-shadow:0 0 22px #ff2bd633}.solo-ai-button.hidden{display:none}

@@ -121,7 +121,7 @@ function snapshot(room) {
   return {
     code: room.code, hostId: room.hostId, status: room.status, countdownAt: room.countdownAt, startedAt: room.startedAt, level: room.level, levelLength: LEVEL_LENGTH, raceElapsed: room.startedAt ? Math.max(0, Date.now() - room.startedAt) : 0, items: (room.items || []).map(i => ({ ...i, hitBy: i.hitBy ? [...i.hitBy] : undefined })),
     players: [...room.players.values()].map(p => ({
-      id: p.id, name: p.name, color: p.color, ready: p.ready, isBot: p.isBot === true, x: p.x, z: p.z,
+      id: p.id, name: p.name, color: p.color, carId: p.carId || 'neon-gt', ready: p.ready, isBot: p.isBot === true, x: p.x, z: p.z,
       heading: p.heading, speed: p.speed, lap: p.lap, checkpoint: p.checkpoint,
       progress: p.progress, finished: p.finished, finishTime: p.finishTime, adjustedTime: p.finishTime == null ? null : p.finishTime + (p.penaltyMs || 0), penaltyMs: p.penaltyMs || 0, checkpointTimes: p.checkpointTimes || [], nitro: p.nitro, coins: p.coins || 0, levelCoins: p.levelCoins || 0, hits: p.hits || 0, driftScore: p.driftScore || 0
     })).sort((a,b) => b.progress-a.progress)
@@ -145,27 +145,27 @@ function emitError(socket, message) { socket.emit('notice', { type: 'error', mes
 
 io.on('connection', socket => {
   socket.data.roomCode = null;
-  socket.on('createRoom', ({ name, level, soloAI } = {}) => {
+  socket.on('createRoom', ({ name, level, soloAI, carId } = {}) => {
     leaveRoom(socket);
     const code = makeCode();
     const initialLevel = clamp(Math.floor(Number(level) || 1), 1, 50);
     const room = { code, hostId: socket.id, status: 'lobby', countdownAt: null, startedAt: null, raceStartedAt: null, level: initialLevel, players: new Map(), items: generateItems(initialLevel), createdAt: Date.now(), soloAI: false };
     rooms.set(code, room);
-    addPlayer(socket, room, name);
+    addPlayer(socket, room, name, carId);
     if (soloAI === true) {
       room.soloAI = true;
       addBotPlayer(room);
       broadcast(room);
     }
   });
-  socket.on('joinRoom', ({ code, name } = {}) => {
+  socket.on('joinRoom', ({ code, name, carId } = {}) => {
     const normalized = cleanCode(code);
     const room = rooms.get(normalized);
     if (!room) return emitError(socket, 'Room not found. Check the code and try again.');
     if (room.players.size >= MAX_PLAYERS) return emitError(socket, 'That room is full (8 racers max).');
     if (room.status !== 'lobby') return emitError(socket, 'That race has already started.');
     leaveRoom(socket);
-    addPlayer(socket, room, name);
+    addPlayer(socket, room, name, carId);
   });
   socket.on('rejoinRoom', ({ code, name } = {}) => {
     const room = rooms.get(cleanCode(code));
@@ -211,6 +211,7 @@ io.on('connection', socket => {
     const allowed = ['#00f5ff','#ff2bd6','#b6ff00','#ff8a00','#9b6bff','#ff3864','#32ffb4','#f8f7ff'];
     if (allowed.includes(value)) { p.color = value; broadcast(room); }
   });
+  socket.on('setCarModel', value => { const room = currentRoom(socket); if (!room || room.status !== 'lobby') return; const p = room.players.get(socket.id); if (!p) return; p.carId = typeof value === 'string' && /^[a-z0-9-]{2,32}$/.test(value) ? value : 'neon-gt'; broadcast(room); });
   socket.on('setReady', value => {
     const room = currentRoom(socket);
     if (!room || !['lobby', 'countdown'].includes(room.status)) return;
@@ -234,6 +235,7 @@ io.on('connection', socket => {
     io.to(room.code).emit('levelStart', { level: room.level, theme: (room.level - 1) % 5 });
     io.to(room.code).emit('countdown', { at: room.countdownAt }); broadcast(room);
   });
+  socket.on('replayLevel', () => { const room = currentRoom(socket); if (!room || room.status !== 'finished') return; room.status = 'countdown'; room.countdownAt = Date.now() + 3500; room.startedAt = null; resetLevel(room); io.to(room.code).emit('levelStart', { level: room.level, theme: (room.level - 1) % 5, replay: true }); io.to(room.code).emit('countdown', { at: room.countdownAt }); broadcast(room); });
   socket.on('input', raw => {
     const room = currentRoom(socket); if (!room || room.status !== 'racing') return;
     const p = room.players.get(socket.id); if (!p || p.finished) return;
@@ -325,11 +327,11 @@ function updateBotControls(room, p) {
   };
 }
 
-function addPlayer(socket, room, name) {
+function addPlayer(socket, room, name, carId = 'neon-gt') {
   const colors = ['#00f5ff','#ff2bd6','#b6ff00','#ff8a00','#9b6bff','#ff3864','#32ffb4','#f8f7ff'];
   const idx = room.players.size;
   const p = {
-    id: socket.id, name: cleanName(name), color: colors[idx % colors.length], ready: false, coins: 0, levelCoins: 0, hits: 0, driftScore: 0,
+    id: socket.id, name: cleanName(name), color: colors[idx % colors.length], carId: typeof carId === 'string' && /^[a-z0-9-]{2,32}$/.test(carId) ? carId : 'neon-gt', ready: false, coins: 0, levelCoins: 0, hits: 0, driftScore: 0,
     x: trackCenter(0, room.level) + (idx - (room.players.size - 1) / 2) * 2.4, z: 2 + idx * 0.5, heading: 0, speed: 0,
     lap: 0, checkpoint: 0, checkpointTimes: [], distance: 0, progress: 0, finished: false, finishTime: null, penaltyMs: 0, offTrack: false, nitro: 100,
     controls: {}, lastInputAt: 0, lastUpdate: Date.now()
